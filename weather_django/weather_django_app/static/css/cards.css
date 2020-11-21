@@ -1,0 +1,180 @@
+/* Cards */
+
+.infoCard {
+    background-color: #FFFF;
+    color: #202B5C;
+    padding: 20px;
+    height: fit-content;
+    min-height: 500px;
+    max-width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0px 20px rgba(0, 0, 0, 0.08), 0 20px 15px rgba(0, 0, 0, 0.10);
+}
+
+.infoCardGraphs {
+    background-color: #202B5C!important;
+    color: #FCFCFC!important;
+    padding: 20px;
+    height: fit-content;
+    min-height: 500px;
+    max-width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 0px 20px rgba(0, 0, 0, 0.08), 0 20px 15px rgba(0, 0, 0, 0.10);
+}
+
+.secondaryCard {
+    background-color: #202B5C;
+    color: #FCFCFC;
+    width: auto;
+    height: fit-content;
+    margin: 10px;
+    border-radius: 10px;
+    text-align-last: center;
+    display: flex;
+}
+
+.secondaryCard:hover {
+    transition: background-color 0.5s ease;
+    background-color: #3347a0;
+}
+
+.secondaryCard .city {
+    position: relative;
+    padding: 10px;
+    line-height: 0;
+    float: right;
+    text-align: right;
+    align-self: center;
+}
+
+.secondaryCard .city .title {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.secondaryCard .city .country {
+    position: relative;
+    font-size: 0.8rem;
+}
+
+.secondaryCard .weather {
+    display: grid;
+    margin: 20px 0px 20px -35px;
+}
+
+.secondaryCard .weather i {
+    font-size: 2rem;
+    margin: 10px;
+}
+
+.secondaryCard .weather .temperature {
+    font-size: 1rem;
+}
+
+
+/* Grid-List View */
+
+.filterButtons {
+    margin: 0!important;
+    padding: 20px;
+    margin-left: -20px!important;
+    display: flex;
+}
+
+.listViewButton,
+.gridViewButton {
+    background-color: #202B5C;
+    color: #FCFCFC;
+    border: 1px solid #FCFCFC;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    height: 45px;
+    width: 45px;
+    text-align: center;
+}
+
+.listViewButton:hover,
+.gridViewButton:hover {
+    background: #FCFCFC;
+    color: #202B5C;
+}
+
+.active {
+    background: #FCFCFC!important;
+    color: #202B5C!important;
+    border: #202B5C solid 1.5px;
+}
+
+.listViewButton {
+    margin-right: 10px;
+}
+
+.list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.list.listViewFilter {
+    flex-direction: column;
+}
+
+.list.gridViewFilter {
+    flex-flow: row wrap;
+}
+
+.list.gridViewFilter li {
+    width: calc(50% - 10px);
+    margin-right: 10px;
+    text-align: center;
+    transition: ease 0.3s;
+}
+
+li {
+    color: #FCFCFC;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+@media screen and (max-width: 576px) {
+    .list.gridViewFilter {
+        flex-direction: column;
+    }
+}
+
+.removeButton {
+    background-color: #202B5C;
+    color: #FCFCFC;
+    padding: 7px;
+    width: 45px;
+    position: absolute;
+    border-radius: 50px;
+    text-align-last: center;
+    margin: -5px 0 0 -10px;
+    box-shadow: 0 0px 20px rgba(0, 0, 0, 0.08), 0 20px 15px rgba(0, 0, 0, 0.03);
+    font-weight: 800;
+    cursor: pointer;
+    border: solid 3.5px #FCFCFC;
+}
+
+.textAlert {
+    text-align: center;
+    vertical-align: middle;
+    display: none;
+    position: relative;
+    line-height: 3rem;
+    margin-top: 50px;
+}
+
+.textAlert img {
+    height: 150px;
+    place-self: center;
+}
+
+.textAlert h3 {
+    margin-top: 10px;
+    font-weight: 700;
+}

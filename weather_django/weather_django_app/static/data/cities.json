@@ -1,0 +1,39 @@
+[{
+        "id": "1",
+        "city": "Aveiro",
+        "name": "Aveiro, Portugal"
+    }, {
+        "id": "2",
+        "city": "Porto",
+        "name": "Porto, Portugal"
+    }, {
+        "id": "3",
+        "city": "Lisboa",
+        "name": "Lisboa, Portugal"
+    }, {
+        "id": "4",
+        "city": "Viseu",
+        "name": "Viseu, Portugal"
+    }, {
+        "id": "5",
+        "city": "Portalegre",
+        "name": "Portalegre, Portugal"
+    },
+    {
+        "id": "6",
+        "city": "Coimbra",
+        "name": "Coimbra, Portugal"
+    }, {
+        "id": "7",
+        "city": "Faro",
+        "name": "Faro, Portugal"
+    }, {
+        "id": "8",
+        "city": "Leiria",
+        "name": "Leiria, Portugal"
+    }, {
+        "id": "9",
+        "city": "Braga",
+        "name": "Braga, Portugal"
+    }
+]

@@ -1,0 +1,418 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block links %}
+{% endblock links%}
+{% block content %}
+<!-- City Selector Card -->
+<div class="col-4">
+   <div class="infoCard">
+      <div class="row logo">
+         <!-- Title -->
+         <h2><img src="{% static "assets/img/day.svg" %}" > Weather <b>Dashboard</b></h2>
+      </div>
+      <div class="row dflex">
+         <div class="searchBox col-9">
+            <center>
+               <!-- Title -->
+               <form class="searchContainer" autocomplete="off">
+                  <!-- SearchBar -->
+                  <input type="text" id="searchBar" placeholder="Search for places...">
+                  <a href="#"><i class="searchIcon fas fa-search"></i></a>
+                  <!-- DropDown -->
+                  <div id="matchList">
+                  </div>
+               </form>
+         </div>
+         <!-- Filter Buttons -->
+         <div class="filterButtons col-3">
+         <div class="listViewButton active"><i class="fa fa-bars" aria-hidden="true"></i></div>
+         <div class="gridViewButton"><i class="fa fa-th-large" aria-hidden="true"></i></div>
+         </div>
+         <br>
+      </div>
+      </center>
+      <!-- Cards -->
+      <ol id="cardList" class="list listViewFilter">
+      </ol>
+      <!-- Appears when there's no cities selected -->
+      <div class="textAlert">
+         <img src="{% static "assets/img/rainy.svg" %}" >
+         <h3>No Cities Selected!</h3>
+      </div>
+   </div>
+</div>
+<!-- Table and Chart Card -->
+<div class="col-8">
+   <div class="infoCardGraphs">
+      <div class="row">
+         <div class="col-12">
+            <!-- Table -->
+            <div>
+               <table id="weatherTable" class="table table-hover responsive nowrap">
+                  <thead>
+                     <tr>
+                        <th>City</th>
+                        <th>Temperature  <small>(ºC)</small></th>
+                        <th><img src="{% static "assets/img/dawn.svg" %}" > Sunrise Time</th>
+                        <th><img src="{% static "assets/img/sunset.svg" %}"> Sunset Time</th>
+                     </tr>
+                  </thead>
+                  <tbody id="body">
+                  </tbody>
+               </table>
+            </div>
+            <!-- Chart -->
+            <p id="chartTitle">Temperature per city <small>(Celsius)</small></p>
+            <div id="chart">
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+{% endblock content %}
+{% block script %}
+<script>
+  // Cities
+  let starters = ["Aveiro","Porto","Lisboa"];
+  let cities = [];
+  let temp = [];
+  
+  // Search
+  const search = document.getElementById('searchBar');
+  const matchList = document.getElementById('matchList');
+  // Grid-List view
+  const listViewButton = document.querySelector('.listViewButton');
+  const gridViewButton = document.querySelector('.gridViewButton');
+  const list = document.querySelector('ol');
+   
+  // -------------------------------------------------------------------
+  // DataTable
+  const table = $("#weatherTable").DataTable({
+    retrieve: true,
+    aaSorting: [],
+    responsive: {
+        details: {
+            type: 'column',
+            target: -1
+        }
+    },
+    paging: false,
+    scrollY: 285,
+    info:false,
+    columnDefs: [
+      {
+        responsivePriority: 1,
+        targets: 0
+      },
+      {
+        responsivePriority: 2,
+        targets: -1
+      }
+    ]
+  });
+  $('[data-toggle="tooltip"]').tooltip();
+  
+  // -------------------------------------------------------------------
+  // Bar Chart
+  function createChart(){
+    document.getElementById('chart').innerHTML = "";
+
+    window.Apex = {
+      chart: {
+        foreColor: "#fff",
+        toolbar: {
+          show: false
+        }
+      },
+      colors: ["#FCCF31", "#17ead9", "#f02fc2"],
+      stroke: {
+        width: 3
+      },
+      dataLabels: {
+        enabled: false
+      },
+      grid: {
+        borderColor: "#40475D"
+      },
+      xaxis: {
+        axisTicks: {
+          color: "#333"
+        },
+        axisBorder: {
+          color: "#333"
+        }
+      },
+      fill: {
+        type: "gradient",
+        gradient: {
+          gradientToColors: ["#F55555", "#6078ea", "#6094ea"]
+        }
+      },
+      tooltip: {
+        theme: "dark",
+        x: {
+          formatter: function (val) {
+            return moment(new Date(val)).format("HH:mm:ss");
+          }
+        }
+      },
+      yaxis: {
+        decimalsInFloat: 2,
+        opposite: true,
+        labels: {
+          offsetX: -10
+        }
+      }
+    };
+
+    var optionsColumn = {
+      chart: {
+        height: 350,
+        type: "bar",
+        columnWidth:'60%',
+        },
+        plotOptions: {
+          bar: {
+              horizontal: false,
+              columnWidth: 10,
+              endingShape: 'rounded'
+          },
+        animations: {
+          enabled: false
+        },
+        zoom: {
+          enabled: false
+        }
+      },
+      dataLabels: {
+        enabled: true
+      },
+      stroke: {
+        width: 0
+      },
+      series: [
+        {
+          name: "Temperature",
+          data: temp
+        }
+      ],
+      fill: {
+        type: "gradient",
+        gradient: {
+          shade: "dark",
+          type: "vertical",
+          shadeIntensity: 0.5,
+          inverseColors: false,
+          opacityFrom: 1,
+          opacityTo: 0.8,
+          stops: [0, 100]
+        }
+      },
+      xaxis: {
+        categories: cities
+      },
+      legend: {
+        show: true
+      }
+    };
+
+    var chartColumn = new ApexCharts(
+      document.querySelector("#chart"),
+      optionsColumn
+    );
+    
+    chartColumn.render();
+    }
+   
+   
+   // * -------------------------
+   // Get Weather Data from API
+   const getCityData = name => {
+   	$.ajax({
+     	type: "GET",
+   		url: "{% url 'data' %}",
+     	data: { 'name' : name },
+     	dataType: "json",
+   		success: function(res) {
+         // Do NOT add if the city exists on the panel
+         if (!cities.includes(res.data.city)){
+           // Card Information
+           cities.push(res.data.city)
+           temp.push(res.data.temperature)
+   
+         // Alert when there's no cities selected
+         if(cities.length == 0){
+           document.querySelector('.textAlert').style.display = "grid";
+         }
+         else{
+           document.querySelector('.textAlert').style.display = "none";
+         }
+   
+           // Update Dashboard
+           createCard(res); //Create the card
+           createChart(temp,cities); //Update the chart
+   
+             // Add row to table
+           var rowNode = table.row.add([res.data.city, res.data.temperature, res.data.sunrise,res.data.sunset] )
+             .draw()
+             .node();
+   
+           // After selecting a city, search bar and matches disappear
+           matchList.innerHTML = "";
+           search.value = "";
+           }
+   
+   
+   		},
+       error: function(err) {
+         console.log("ERR:",err);
+       }
+   	})
+   }
+   
+   // Create Card
+   const createCard = async data => {
+     // Load Json with icons
+     const res = await fetch('static/data/icons.json');
+     const weatherIcons = await res.json();
+    
+     // Add FontAwesome Prefix
+     var prefix = 'fas fa-';
+     var code = data.data.icon;
+     var icon = weatherIcons[code].icon;
+     // Append to eachother
+     icon = prefix + icon;
+   
+     // Creating the secondary card
+     let html = `<li id="li_${data.data.city}">
+                   <!-- Individual City Card  -->
+                   <div class="secondaryCard">
+                   <div id="rm_${data.data.city }_${data.data.temperature}" class="removeButton" onclick="removeCity(this.id)" >X</div>
+                     <!-- City and Country Labels -->
+                     <div class="city col-8">
+                       <h2 class="title">${data.data.city}</h2>
+                       <p class="country">Portugal</p>
+                     </div>
+                     <!-- Weather -->
+                     <div class="weather col-4">
+                       <i class="${icon}"></i>
+                       <span class="temperature">${data.data.temperature} ºC</span>
+                     </div>
+                   </div>
+                 </li>
+                 `
+   	const cardList = document.getElementById("cardList");
+   	cardList.innerHTML += html;
+   }
+   
+   // Remove city
+   const removeCity = city =>{
+     var [cityToRem, tempToRem] = (city.substr(3)).split('_');
+     if (cities.includes(cityToRem)){
+       // Remove from Global Arrays
+       deleteFromArray(cityToRem,cities);
+       deleteFromArray(Number(tempToRem),temp);
+   
+       // Remove Chart Bar
+       createChart(temp,cities);
+       // Remove Table Row
+       deleteRow(table,cityToRem);
+   
+       // Remove Card
+       var liToRem = document.getElementById('li_' + cityToRem);
+       liToRem.parentNode.removeChild(liToRem);
+   
+       if(cities.length == 0){
+         document.querySelector('.textAlert').style.display = "grid";
+       }
+       else{
+         document.querySelector('.textAlert').style.display = "none";
+       }
+     }
+   }
+   
+   // * -------------------------
+   
+   // Initialization
+   // Create starter cities
+   starters.forEach(city =>{
+     getCityData(city);
+   });
+   
+   // Create initial Bar Chart
+   createChart(temp,cities);
+   
+   // -------------------------------------------------------------------
+   // Grid List View
+   listViewButton.onclick = function () {
+     if (!listViewButton.className.includes("active")){
+       gridViewButton.className = gridViewButton.className.replace(" active", " ") ;
+       list.classList.remove('gridViewFilter');
+       list.classList.add('listViewFilter');
+       this.className += " active";
+     }
+   }
+   
+   gridViewButton.onclick = function () {
+     if (!gridViewButton.className.includes("active")){
+       listViewButton.className = listViewButton.className.replace(" active", "") ;
+       if (window.screen.availWidth > 600){
+         list.classList.remove('listViewFilter');
+         list.classList.add('gridViewFilter');
+         this.className += " active";
+       }
+     }
+   }
+   // -------------------------------------------------------------------
+   // Search and Match List
+   const searchCities = async searchText => {
+   	const res = await fetch('static/data/cities.json');
+   	const cities = await res.json();
+   
+   	let matches = cities.filter(city => {
+   		const regex = new RegExp(`^${searchText}`, 'gi');
+   		return city.name.match(regex);
+   	});
+   
+   	if(searchText.length === 0){
+   		matches = [];
+   		matchList.innerHTML = '';
+   	}
+   	dropdownHTML(matches);
+   }
+   // Dropdown with matches
+   const dropdownHTML = matches => {
+   	if(matches.length > 0){
+   		const html = matches.map( match =>
+   		`<div class="listItemDropdown" id="${match.city}" onClick="getCityData(this.id)">
+   			${match.name}
+   		</div>`
+   		).join('');
+   
+   		matchList.innerHTML = html;
+   	}
+   }
+   search.addEventListener('input', () => searchCities(search.value));
+   
+   // -------------------------------------------------------------------
+   // Others
+   // Delete From Array (Helpful)
+   const deleteFromArray = (element,array) =>{
+     const index = array.indexOf(element);
+     if (index > -1) {
+       array.splice(index, 1);
+     }
+   }
+   
+   // Delete Row From Table
+   const deleteRow = (table,given_value) => {
+     table
+       .rows( function ( idx, data, node ) {
+           return data[0] === given_value;
+       } )
+       .remove()
+       .draw();
+   }
+   
+</script>
+{% endblock script %}
