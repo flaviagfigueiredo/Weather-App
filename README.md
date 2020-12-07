@@ -30,7 +30,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![Screenshot From Project](https://github.com/flaviagfigueiredo/WeatherApp/blob/master/webpage.png?raw=true)
+![Screenshot From Project](https://github.com/flaviagfigueiredo/Weather-App/blob/master/webpage.png?raw=true)
 
 
 This project consists on a webpage where you can compare various weather informations (such as temperature (Celsius), sunrise time and sunset time) from different Portuguese cities in a graphics display. You'll be able to analyze the temperature of all the selected cities side by side in a bar chart and also compare the time for sunset and sunrise in those locations in a dataTable.
@@ -38,7 +38,7 @@ This project consists on a webpage where you can compare various weather informa
 
 #### Visual Identity
 
-<div align="center"><img src="https://github.com/flaviagfigueiredo/WeatherApp/blob/master/colorpalette.png?raw=true"></div>
+<div align="center"><img src="https://github.com/flaviagfigueiredo/Weather-App/blob/master/colorpalette.png?raw=true"></div>
 
 
 The color palette choice for this webpage was selected with the intent of representing the idea of weather elements (different shades of blue serving as the sky and shades of yellow and orange representing the sun).
